@@ -279,9 +279,12 @@ class LSTM(nn.Module):
                 device = input_.get_device()
                 length = length.cuda(device)
         if hx is None:
-            hx = Variable(input_.data.new(self.num_layers, batch_size, self.hidden_size).zero_())
+            hx = Variable(
+                input_.data.new(
+                    self.num_layers, batch_size,
+                    self.hidden_size).zero_())
             hx = (hx, hx)
-            
+
             #  hx = (Variable(nn.init.xavier_uniform(weight.new(self.num_layers, batch_size, self.hidden_size))),
             #        Variable(nn.init.xavier_uniform(weight.new(self.num_layers, batch_size, self.hidden_size))))
         h_n = []
@@ -289,15 +292,15 @@ class LSTM(nn.Module):
         layer_output = None
         for layer in range(self.num_layers):
             cell = self.get_cell(layer)
-            hx_layer = (hx[0][layer,:,:], hx[1][layer,:,:])
-            
+            hx_layer = (hx[0][layer, :, :], hx[1][layer, :, :])
+
             if layer == 0:
                 layer_output, (layer_h_n, layer_c_n) = LSTM._forward_rnn(
                     cell=cell, input_=input_, length=length, hx=hx_layer)
             else:
                 layer_output, (layer_h_n, layer_c_n) = LSTM._forward_rnn(
                     cell=cell, input_=layer_output, length=length, hx=hx_layer)
-            
+
             input_ = self.dropout_layer(layer_output)
             h_n.append(layer_h_n)
             c_n.append(layer_c_n)
