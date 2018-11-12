@@ -212,7 +212,8 @@ class BNLSTMCell(nn.Module):
         bn_wh = self.bn_hh(wh, time=time)
         bn_wi = self.bn_ih(wi, time=time)
         f, i, o, g = torch.split(bn_wh + bn_wi + bias_batch,
-                                 split_size=self.hidden_size, dim=1)
+                                 split_size=self.hidden_size,
+                                 dim=1)
         c_1 = torch.sigmoid(f)*c_0 + torch.sigmoid(i)*torch.tanh(g)
         h_1 = torch.sigmoid(o) * torch.tanh(self.bn_c(c_1, time=time))
         return h_1, c_1
@@ -278,8 +279,11 @@ class LSTM(nn.Module):
                 device = input_.get_device()
                 length = length.cuda(device)
         if hx is None:
-            hx = (Variable(nn.init.xavier_uniform(weight.new(self.num_layers, batch_size, self.hidden_size))),
-                  Variable(nn.init.xavier_uniform(weight.new(self.num_layers, batch_size, self.hidden_size))))
+            hx = Variable(input_.data.new(self.num_layers, batch_size, self.hidden_size).zero_())
+            hx = (hx, hx)
+            
+            #  hx = (Variable(nn.init.xavier_uniform(weight.new(self.num_layers, batch_size, self.hidden_size))),
+            #        Variable(nn.init.xavier_uniform(weight.new(self.num_layers, batch_size, self.hidden_size))))
         h_n = []
         c_n = []
         layer_output = None
