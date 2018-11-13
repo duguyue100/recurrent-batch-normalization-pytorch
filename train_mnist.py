@@ -89,9 +89,9 @@ def main():
     def compute_loss_accuracy(data, label):
         hx = None
         if not pmnist:
-            h0 = Variable(data.data.new(data.size(0), hidden_size)
+            h0 = Variable(data.data.new(1, data.size(0), hidden_size)
                           .normal_(0, 0.1))
-            c0 = Variable(data.data.new(data.size(0), hidden_size)
+            c0 = Variable(data.data.new(1, data.size(0), hidden_size)
                           .normal_(0, 0.1))
             hx = (h0, c0)
         _, (h_n, _) = model(input_=data, hx=hx)

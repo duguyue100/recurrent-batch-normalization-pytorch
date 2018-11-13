@@ -279,14 +279,21 @@ class LSTM(nn.Module):
                 device = input_.get_device()
                 length = length.cuda(device)
         if hx is None:
-            hx = Variable(
-                input_.data.new(
-                    self.num_layers, batch_size,
-                    self.hidden_size).zero_())
-            hx = (hx, hx)
+            #  hx = Variable(
+            #      input_.data.new(
+            #          self.num_layers, batch_size,
+            #          self.hidden_size).zero_())
+            #  hx = (hx, hx)
 
-            #  hx = (Variable(nn.init.xavier_uniform(weight.new(self.num_layers, batch_size, self.hidden_size))),
-            #        Variable(nn.init.xavier_uniform(weight.new(self.num_layers, batch_size, self.hidden_size))))
+            hx = (Variable(
+                nn.init.xavier_uniform(
+                    input_.data.new(self.num_layers, batch_size,
+                                    self.hidden_size))),
+                  Variable(
+                nn.init.xavier_uniform(
+                    input_.data.new(self.num_layers, batch_size,
+                                    self.hidden_size))))
+            print(hx[0].size())
         h_n = []
         c_n = []
         layer_output = None
